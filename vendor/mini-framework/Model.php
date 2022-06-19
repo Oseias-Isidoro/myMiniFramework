@@ -4,6 +4,7 @@ require_once __DIR__.'/DB/Connection.php';
 
 /**
  *
+ * @property string $table
  */
 class Model
 {
@@ -12,9 +13,6 @@ class Model
      */
     protected Connection $connection;
 
-    /**
-     *
-     */
     public function __construct()
     {
         $this->connection = new Connection();
@@ -23,30 +21,49 @@ class Model
     }
 
     /**
+     * @param string $query
+     * @param array $bindValues
      * @return array|false
      */
-    public function get()
+    public function raw(string $query, array $bindValues = [])
     {
-        $query = "select * from $this->table where 1;";
-
-        $stmt = $this->connection->getConnection()->prepare($query);
-        $stmt->execute();
-
-        return $stmt->fetchAll(PDO::FETCH_OBJ);
+        return $this->execute($query, $bindValues);
     }
 
     /**
-     * @param $id
      * @return array|false
      */
-    public function find($id)
+    public function all()
     {
-        $query = "select * from $this->table where id = :id;";
+        return $this->execute("select * from $this->table where 1");
+    }
 
+    /**
+     * @param int $id
+     * @return array|false
+     */
+    public function find(int $id)
+    {
+        return $this->execute(
+            "select * from $this->table where id = :id",
+            [':id' => $id]
+        );
+    }
+
+    /**
+     * @param string $query
+     * @param array $bindValues
+     * @return array|false
+     */
+    protected function execute(string $query, array $bindValues = [])
+    {
         $stmt = $this->connection->getConnection()->prepare($query);
-        $stmt->bindValue(':id', $id);
-        $stmt->execute();
 
+        if (isset($bindValues))
+            foreach ($bindValues as $key => $value)
+                $stmt->bindValue($key, $value);
+
+        $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_OBJ);
     }
 }
