@@ -1,33 +1,17 @@
 <?php
 
-require_once __DIR__.'/DB/Connection.php';
+require_once __DIR__.'/DB/DB.php';
 
 /**
  *
  * @property string $table
  */
-class Model
+abstract class Model extends DB
 {
-    /**
-     * @var Connection
-     */
-    protected Connection $connection;
-
     public function __construct()
     {
-        $this->connection = new Connection();
-
+        parent::__construct();
         $this->table = $this->table ?? get_class($this).'s';
-    }
-
-    /**
-     * @param string $query
-     * @param array $bindValues
-     * @return array|false
-     */
-    public function raw(string $query, array $bindValues = [])
-    {
-        return $this->execute($query, $bindValues);
     }
 
     /**
@@ -48,22 +32,5 @@ class Model
             "select * from $this->table where id = :id",
             [':id' => $id]
         );
-    }
-
-    /**
-     * @param string $query
-     * @param array $bindValues
-     * @return array|false
-     */
-    protected function execute(string $query, array $bindValues = [])
-    {
-        $stmt = $this->connection->getConnection()->prepare($query);
-
-        if (isset($bindValues))
-            foreach ($bindValues as $key => $value)
-                $stmt->bindValue($key, $value);
-
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_OBJ);
     }
 }
