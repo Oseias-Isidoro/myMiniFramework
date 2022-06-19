@@ -2,10 +2,19 @@
 
 require_once __DIR__.'/DB/Connection.php';
 
+/**
+ *
+ */
 class Model
 {
+    /**
+     * @var Connection
+     */
     protected Connection $connection;
 
+    /**
+     *
+     */
     public function __construct()
     {
         $this->connection = new Connection();
@@ -13,6 +22,9 @@ class Model
         $this->table = $this->table ?? get_class($this).'s';
     }
 
+    /**
+     * @return array|false
+     */
     public function get()
     {
         $query = "select * from $this->table where 1;";
@@ -23,6 +35,10 @@ class Model
         return $stmt->fetchAll(PDO::FETCH_OBJ);
     }
 
+    /**
+     * @param $id
+     * @return array|false
+     */
     public function find($id)
     {
         $query = "select * from $this->table where id = :id;";
