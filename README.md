@@ -28,6 +28,8 @@ class HomeController
 ```
 
 ## creating a model
+the medel name will be used in the plural as the table name
+
 Models/User.php
 
 ```php
