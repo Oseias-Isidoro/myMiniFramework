@@ -1,5 +1,4 @@
 <?php
-
 /**
  *
  */
@@ -31,10 +30,17 @@ class Connection
      */
     public function __construct()
     {
-        $this->servername = 'localhost:3306';
-        $this->db_name = 'test_framework';
-        $this->username = 'root';
-        $this->password = '';
+        require_once __DIR__.'/../../../db_config.php';
+
+        /** @var string $DB_SERVE */
+        $this->servername = $DB_SERVE;
+        /** @var string $DB_NAME */
+        $this->db_name = $DB_NAME;
+        /** @var string $DB_USERNAME */
+        $this->username = $DB_USERNAME;
+        /** @var string $DB_PASSWORD */
+        $this->password = $DB_PASSWORD;
+
         $this->connect();
     }
 
